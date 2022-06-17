@@ -1,0 +1,48 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc",
+    "build:watch": "npm run clean && tsc -w",
+    "start": "npm run build && node .",
+    "start:dev": "npm run build && nodemon .",
+    "dev": "nodemon --exec npm run start",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/amqplib": "^0.8.2",
+    "@types/express": "^4.17.13",
+    "@types/uuid": "^8.3.4",
+    "got": "^12.1.0",
+    "nodemon": "^2.0.16",
+    "typescript": "^4.8.0-dev.20220609"
+  },
+  "dependencies": {
+    "@logdna/logger": "^2.6.5",
+    "amqplib": "^0.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-rate-limit": "^6.4.0",
+    "express-winston": "^4.2.0",
+    "helmet": "^5.1.0",
+    "ioredis": "^5.0.6",
+    "mongoose": "^6.3.6",
+    "morgan": "^1.10.0",
+    "nanoid": "^4.0.0",
+    "reflect-metadata": "^0.1.13",
+    "socket.io": "^4.5.1",
+    "uuid": "^8.3.2",
+    "winston": "^3.7.2"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.6",
+    "utf-8-validate": "^5.0.9"
+  }
+}
