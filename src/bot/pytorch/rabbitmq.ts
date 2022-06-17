@@ -3,6 +3,7 @@ import { EventEmitter, once } from "events";
 
 import { IBotMessage } from "../../interfaces";
 import config from "../../config";
+import { getLogger } from "../../logger";
 
 const BOT_QUEUE = config.env.BOT_QUEUE;
 const CLIENT_QUEUE = config.env.CLIENT_QUEUE;
@@ -24,6 +25,7 @@ async function createChannelAndQueues(
 }
 
 export class RabbitMQ extends EventEmitter {
+  private logger = getLogger("local", "rabbitmq");
   private botChannel!: amqplib.Channel;
   private clientChannel!: amqplib.Channel;
   private isReady = false;
@@ -63,7 +65,12 @@ export class RabbitMQ extends EventEmitter {
         this.botChannel = botChannel;
         this.clientChannel = clientChannel;
         this.isReady = true;
-        console.log("RabbitMQ is ready");
+        this.logger.log({
+          message: "RabbitMQ is ready",
+          options: {
+            level: "info",
+          },
+        });
 
         this.emit("ready");
       })

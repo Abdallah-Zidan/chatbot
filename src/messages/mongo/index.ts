@@ -18,4 +18,10 @@ export class MongoMessageStore implements IMessageStore {
   async newMessageID() {
     return new mongoose.Types.ObjectId().toString();
   }
+
+  async deliverMessage(id: string) {}
+
+  async findMissedMessagesForUser(userID: string) {
+    return [];
+  }
 }

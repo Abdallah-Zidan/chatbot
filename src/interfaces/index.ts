@@ -38,6 +38,8 @@ export interface IMessageStore {
   saveMessage: (message: IMessage) => Promise<void>;
   findMessagesForUser: (userID: string) => Promise<IMessage[]>;
   newMessageID: () => Promise<string>;
+  deliverMessage: (id: string) => Promise<void>;
+  findMissedMessagesForUser: (userID: string) => Promise<IMessage[]>;
 }
 
 export interface SessionableSocket extends Socket {

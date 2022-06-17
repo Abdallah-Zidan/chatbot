@@ -3,6 +3,10 @@ import { v4 as uuid4 } from "uuid";
 import { injectable } from "inversify";
 @injectable()
 export class InMemoryMessageStore implements IMessageStore {
+  async deliverMessage(id: string) {}
+  async findMissedMessagesForUser(userID: string) {
+    return [];
+  }
   protected messages: IMessage[] = [];
 
   async newMessageID() {

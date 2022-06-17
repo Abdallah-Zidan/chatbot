@@ -40,6 +40,7 @@ declare namespace NodeJS {
     CLIENT_QUEUE: string;
     BOT_QUEUE: string;
     RABBITMQ_URL: string;
+    ENABLE_REMOTE_LOGGER: boolean;
   }
 }
 
