@@ -1,7 +1,8 @@
+import { injectable } from "inversify";
 import mongoose from "mongoose";
 import { IMessageStore, IMessage } from "../../interfaces";
 import { Message } from "./message.schema";
-
+@injectable()
 export class MongoMessageStore implements IMessageStore {
   async saveMessage(message: IMessage) {
     const newMessage = new Message(message);

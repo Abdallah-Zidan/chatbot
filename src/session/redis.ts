@@ -1,4 +1,6 @@
+import { inject, injectable } from "inversify";
 import { Redis } from "ioredis";
+import { TYPES } from "../container";
 import { ISessionStore, Session } from "./../interfaces";
 import { SessionStore } from "./abstract-store";
 

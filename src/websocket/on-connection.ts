@@ -1,41 +1,30 @@
-import { Server } from "socket.io";
+import { TYPES, container } from "../container";
 import {
   SessionedSocket,
   SessionableSocket,
   isSessionedSocket,
   ISessionStore,
   IMessageStore,
-  IBot,
 } from "../interfaces";
 import { attachSocketHandlers } from "./handlers";
-import { createUsersAndHistoryHandler } from "./send-history";
+import { sendChatHistory } from "./send-history";
 
-export function onConnection({
-  messageStore,
-  sessionStore,
-  io,
-  bot,
-}: {
-  messageStore: IMessageStore;
-  sessionStore: ISessionStore;
-  io: Server;
-  bot: IBot;
-}) {
-  return async function onSocketConnected(socket: SessionableSocket) {
-    if (isSessionedSocket(socket)) {
-      await saveUserSession(sessionStore, socket);
-      await pushSessionInfo(socket);
-      await createUsersAndHistoryHandler({
-        messageStore,
-        sessionStore,
-        socket,
-      });
-      attachSocketHandlers({ messageStore, sessionStore, socket, io, bot });
-    } else {
-      socket.emit("error", "invalid session");
-      socket.disconnect();
-    }
-  };
+export async function onConnection(socket: SessionableSocket) {
+  const sessionStore = container.get<ISessionStore>(TYPES.SessionStore);
+  const messageStore = container.get<IMessageStore>(TYPES.MessageStore);
+
+  if (isSessionedSocket(socket)) {
+    await saveUserSession(sessionStore, socket);
+    await pushSessionInfo(socket);
+    await sendChatHistory({
+      messageStore,
+      socket,
+    });
+    attachSocketHandlers(socket);
+  } else {
+    socket.emit("error", "invalid session");
+    socket.disconnect();
+  }
 }
 
 function saveUserSession(sessionStore: ISessionStore, socket: SessionedSocket) {

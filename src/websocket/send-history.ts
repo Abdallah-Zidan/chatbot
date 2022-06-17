@@ -1,12 +1,10 @@
-import { ISessionStore, IMessageStore, SessionedSocket } from "../interfaces";
+import { IMessageStore, SessionedSocket } from "../interfaces";
 
-export async function createUsersAndHistoryHandler({
+export async function sendChatHistory({
   messageStore,
-  sessionStore,
   socket,
 }: {
   messageStore: IMessageStore;
-  sessionStore: ISessionStore;
   socket: SessionedSocket;
 }) {
   const messages = await messageStore.findMessagesForUser(socket.sessionID);

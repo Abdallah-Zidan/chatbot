@@ -5,15 +5,19 @@ import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import cors from "cors";
-import Redis from "ioredis";
 import { Server } from "socket.io";
+
+//? register services into container
+import { TYPES, container } from "./container";
+import { registerServices } from "./service.provider";
 
 import config from "./config";
 import { ILoggable } from "./interfaces";
 import { getLogger } from "./logger";
-import { RedisSessionStore } from "./session";
-import { MongoMessageStore } from "./messages";
-import { pytorch } from "./bot";
+
+registerServices();
+
+//? setup application
 export async function setup(app: Application) {
   const localLogger = getLogger("local", "setup");
   const remoteLogger = getLogger("remote", "setup");
@@ -21,13 +25,6 @@ export async function setup(app: Application) {
 
   //? connect to mongo db that is used for storing messages
   await mongoose.connect(process.env.MONGO_URL);
-
-  const sessionStore = new RedisSessionStore(
-    new Redis({
-      host: config.env.REDIS_HOST,
-    })
-  );
-  const messageStore = new MongoMessageStore();
 
   const logConnection: ILoggable = {
     message: "connected to mongo db",
@@ -72,5 +69,8 @@ export async function setup(app: Application) {
       allowedHeaders: "*",
     },
   });
-  return { sessionStore, messageStore, server, io, port, bot: pytorch };
+
+  container.bind(TYPES.IO).toConstantValue(io);
+
+  return { server, io, port };
 }

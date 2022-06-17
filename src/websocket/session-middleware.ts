@@ -1,31 +1,30 @@
-import { ISessionStore, SessionableSocket } from "../interfaces";
+import { SessionableSocket, ISessionStore } from "../interfaces";
+import { TYPES, container } from "../container";
 
-export function createSessionMiddleware(sessionStore: ISessionStore) {
-  return async function sessionMiddleware(
-    socket: SessionableSocket,
-    next: (err?: Error) => void
-  ) {
-    const sessionID = socket.handshake.auth.sessionID;
-    console.log(sessionID);
+export async function sessionMiddleware(
+  socket: SessionableSocket,
+  next: (err?: Error) => void
+) {
+  const sessionID = socket.handshake.auth.sessionID;
+  const sessionStore = container.get<ISessionStore>(TYPES.SessionStore);
 
-    if (sessionID) {
-      const session = await sessionStore.findSession(sessionID);
-      if (session) {
-        socket.sessionID = sessionID;
-        socket.username = session.username;
-        return next();
-      }
+  if (sessionID) {
+    const session = await sessionStore.findSession(sessionID);
+    if (session) {
+      socket.sessionID = sessionID;
+      socket.username = session.username;
+      return next();
     }
+  }
 
-    const username = socket.handshake.auth.username;
-    if (!username) {
-      return next(new Error("invalid username"));
-    }
+  const username = socket.handshake.auth.username;
+  if (!username) {
+    return next(new Error("invalid username"));
+  }
 
-    //? create new session
-    const newSessionID = await sessionStore.randomID();
-    socket.sessionID = newSessionID;
-    socket.username = username;
-    next();
-  };
+  //? create new session
+  const newSessionID = await sessionStore.randomID();
+  socket.sessionID = newSessionID;
+  socket.username = username;
+  next();
 }

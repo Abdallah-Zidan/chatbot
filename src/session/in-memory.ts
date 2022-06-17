@@ -1,7 +1,9 @@
+import { injectable } from "inversify";
 import { Session, ISessionStore } from "../interfaces";
 import { SessionStore } from "./abstract-store";
 export type SessionMap = Map<string, Session>;
 
+@injectable()
 export class InMemorySessionStore
   extends SessionStore
   implements ISessionStore
