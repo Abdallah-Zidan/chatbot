@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { getLogger } from "../logger";
+import { getLogger, transformError } from "../logger";
 import {
   SessionedSocket,
   IMessageStore,
@@ -7,7 +7,6 @@ import {
   ContentType,
   IMessage,
   IBot,
-  ILogger,
   IBotMessage,
 } from "../interfaces";
 import { container, TYPES } from "../container";
@@ -34,7 +33,6 @@ async function onMessage(this: SessionedSocket, message: string) {
     type: ContentType.Text,
     isBot: false,
     sessionID: socket.sessionID,
-    timestamp: new Date(),
     delivered: true,
   };
   await messageStore.saveMessage(toSend);
@@ -70,7 +68,20 @@ async function onDisconnect(this: SessionedSocket) {
 
 async function onDeliverd(this: SessionedSocket, id: string) {
   const messageStore = container.get<IMessageStore>(TYPES.MessageStore);
-  messageStore.deliverMessage(id);
+  messageStore.deliverMessage(id).catch((err) => {
+    localLogger.log({
+      message: `error delivering message`,
+      options: {
+        level: "error",
+        timestamp: Date.now(),
+      },
+      meta: {
+        error: transformError(err),
+        sessionID: this.sessionID,
+        messageID: id,
+      },
+    });
+  });
 }
 
 export function createOnReplyHandler() {

@@ -13,7 +13,6 @@ const transports =
     ? [
         new winston.transports.File({
           filename: "logs/log.json",
-          level: "debug",
         }),
       ]
     : [
@@ -25,14 +24,15 @@ const transports =
         }),
         new winston.transports.File({
           filename: "logs/log.json",
-          level: "debug",
           format: winston.format.json(),
+          maxsize: 5242880,
+          maxFiles: 5,
+          zippedArchive: true,
         }),
       ];
 
 if (!global.__winston__) {
   global.__winston__ = winston.createLogger({
-    level: "debug",
     transports,
   });
 }

@@ -29,7 +29,6 @@ export interface IMessage {
   data: any;
   isBot: boolean;
   createdAt?: Date;
-  timestamp?: Date;
   delivered?: boolean;
   updatedAt?: Date;
 }

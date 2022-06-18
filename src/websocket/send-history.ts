@@ -19,6 +19,6 @@ export async function onHistory(this: SessionedSocket) {
 
 export async function onMissed(this: SessionedSocket) {
   const messageStore = container.get<IMessageStore>(TYPES.MessageStore);
-  const messages = await messageStore.findMessagesForUser(this.sessionID);
+  const messages = await messageStore.findMissedMessagesForUser(this.sessionID);
   this.emit("missed", messages);
 }
